@@ -6,6 +6,8 @@ class VehicleBase(BaseModel):
     model: str
     photo: str
     price: float
+    year: int
+    location: str
 
 class VehicleCreate(VehicleBase):
     pass

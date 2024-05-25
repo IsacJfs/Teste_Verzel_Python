@@ -10,3 +10,5 @@ class Vehicle(Base):
     model = Column(String)
     photo = Column(String)
     price = Column(Float)
+    year = Column(Integer)
+    location = Column(String)
