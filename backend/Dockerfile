@@ -1,10 +1,13 @@
 
-FROM python:3.9-slim
+FROM python:3.10-slim
 
 WORKDIR /app
 
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
+
+# Apply specific modification to passlib
+RUN sed -i 's/__about__\.//g' /usr/local/lib/python3.10/site-packages/passlib/handlers/bcrypt.py
 
 COPY . .
 

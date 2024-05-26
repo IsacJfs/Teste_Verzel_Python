@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from typing import List
-from . import models, schemas, crud, database
+from . import models, schemas, crud, database, auth
 
 app = FastAPI()
 app.add_middleware(
@@ -22,3 +22,6 @@ def read_vehicles(skip: int = 0, limit: int = 10, db: Session = Depends(database
 @app.post("/vehicles/", response_model=schemas.Vehicle)
 def create_vehicle(vehicle: schemas.VehicleCreate, db: Session = Depends(database.get_db)):
     return crud.create_vehicle(db=db, vehicle=vehicle)
+
+
+app.include_router(auth.router, prefix="/auth")
