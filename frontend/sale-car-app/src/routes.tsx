@@ -6,7 +6,6 @@ const Rotas = () => {
     <>
       <Layout>
         <div>
-          <h3>lista de carros</h3>
           <Cars />
         </div>
       </Layout>

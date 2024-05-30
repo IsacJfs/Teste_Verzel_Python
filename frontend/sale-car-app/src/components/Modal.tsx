@@ -74,7 +74,7 @@ const Modal: React.FC<ModalProps> = ({
             flex
             flex-col
             w-full
-            bg-black
+            bg-gray-100
             outline-none
             focus:outline-none
             "
@@ -89,13 +89,13 @@ const Modal: React.FC<ModalProps> = ({
               rounded-t
               "
             >
-              <h3 className="text-3xl font-semibold text-white">{title}</h3>
+              <h3 className="text-3xl font-semibold text-black">{title}</h3>
               <button
                 className="
                   p-1
                   ml-auto
                   border-0
-                  text-white
+                  text-black
                   hover:opacity-70
                   transition
                 "
