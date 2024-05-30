@@ -1,5 +1,6 @@
 import React from 'react'
 import SidebarItem from './SidebarItem'
+import Button from '../Button'
 
 const Sidebar: React.FC = () => {
   return (
@@ -11,30 +12,80 @@ const Sidebar: React.FC = () => {
             <button className="text-sm text-blue-500">Remover filtros</button>
           </div>
           <SidebarItem title="Promoção">
-            <button className="border rounded-md px-2 py-1 m-1">
-              Ofertas Da Semana
-            </button>
-            <button className="border rounded-md px-2 py-1 m-1">
-              Pronta Entrega
-            </button>
-            <button className="border rounded-md px-2 py-1 m-1">
-              Disponível Em 15 Dias
-            </button>
-            <button className="border rounded-md px-2 py-1 m-1">
-              Disponível Em 30 Dias
-            </button>
+            <div className="flex flex-col items-center space-y-2">
+              <Button
+                label="Ofertas"
+                secondary
+                onClick={function (): void {
+                  throw new Error('Function not implemented.')
+                }}
+              />
+              <Button
+                label="Pronta Entrega"
+                secondary
+                onClick={function (): void {
+                  throw new Error('Function not implemented.')
+                }}
+              />
+              <Button
+                label="Disponível em 30 dias"
+                secondary
+                onClick={function (): void {
+                  throw new Error('Function not implemented.')
+                }}
+              />
+              <Button
+                label="Disponível em 90 dias"
+                secondary
+                onClick={function (): void {
+                  throw new Error('Function not implemented.')
+                }}
+              />
+            </div>
           </SidebarItem>
           <SidebarItem title="Localização - Estado e Loja">
-            <button className="border rounded-md px-2 py-1 m-1">Cidade</button>
+            <div className="flex flex-col items-center space-y-2">
+              <Button
+                label="São Paulo"
+                secondary
+                onClick={function (): void {
+                  throw new Error('Function not implemented.')
+                }}
+              />
+            </div>
           </SidebarItem>
           <SidebarItem title="Marca e modelo">
-            <button className="border rounded-md px-2 py-1 m-1">Marca</button>
+            <div className="flex flex-col items-center space-y-2">
+              <Button
+                label="Toyota"
+                secondary
+                onClick={function (): void {
+                  throw new Error('Function not implemented.')
+                }}
+              />
+            </div>
           </SidebarItem>
           <SidebarItem title="Ano">
-            <button className="border rounded-md px-2 py-1 m-1">Ano</button>
+            <div className="flex flex-col items-center space-y-2">
+              <Button
+                label="2010"
+                secondary
+                onClick={function (): void {
+                  throw new Error('Function not implemented.')
+                }}
+              />
+            </div>
           </SidebarItem>
           <SidebarItem title="Preço">
-            <button className="border rounded-md px-2 py-1 m-1">Preço</button>
+            <div className="flex flex-col items-center space-y-2">
+              <Button
+                label="220000"
+                secondary
+                onClick={function (): void {
+                  throw new Error('Function not implemented.')
+                }}
+              />
+            </div>
           </SidebarItem>
         </div>
       </div>
