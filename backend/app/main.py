@@ -47,3 +47,11 @@ def delete_vehicle(
     return crud.delete_vehicle(db, id, current_user)
 
 app.include_router(auth.router, prefix="/auth")
+
+@app.get("/brands/", response_model=List[schemas.Brand])
+def read_brands(db: Session = Depends(database.get_db)):
+    return crud.get_brands(db)
+
+@app.get("/brands/{marca_id}/models/", response_model=List[schemas.Model])
+def read_models_by_brands(marca_id: int, db: Session = Depends(database.get_db)):
+    return crud.get_models_by_brands(db, marca_id)

@@ -59,3 +59,9 @@ def create_vehicle(db: Session, vehicle: schemas.VehicleCreate, current_user: mo
     db.commit()
     db.refresh(db_vehicle)
     return db_vehicle
+
+def get_brands(db: Session):
+    return db.query(models.BrandCar).all()
+
+def get_models_by_brands(db: Session, marca_id: int):
+    return db.query(models.ModelCar).filter(models.ModelCar.idmarca == marca_id).all()

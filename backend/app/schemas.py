@@ -35,3 +35,28 @@ class Vehicle(VehicleBase):
 
     class Config:
         orm_mode = True
+
+class BrandBase(BaseModel):
+    nome: str
+
+class BrandCreate(BrandBase):
+    pass
+
+class Brand(BrandBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+class ModelBase(BaseModel):
+    nome: str
+    idmarca: int
+
+class ModelCreate(ModelBase):
+    pass
+
+class Model(ModelBase):
+    id: int
+
+    class Config:
+        orm_mode = True
