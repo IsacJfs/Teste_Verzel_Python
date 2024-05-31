@@ -1,37 +1,52 @@
-// E:\dev\Teste_Verzel_Python\frontend\sale-car-app\src\components\VehicleForm.tsx
-
-import React, { useState } from 'react';
-import { useDropzone } from 'react-dropzone';
-import Input from './Input';
-import Button from './Button';
+import React, { useEffect, useState } from 'react'
+import { useDropzone } from 'react-dropzone'
+import Input from './Input'
+import Button from './Button'
+import { useDb } from '@/features/dbModels/useDb'
+import Dropdown from './Dropdown'
 
 const VehicleForm: React.FC = () => {
-  const [name, setName] = useState('');
-  const [model, setModel] = useState('');
-  const [version, setVersion] = useState('');
-  const [mileage, setMileage] = useState('');
-  const [price, setPrice] = useState('');
-  const [description, setDescription] = useState('');
-  const [image, setImage] = useState<File | null>(null);
+  const [version, setVersion] = useState('')
+  const [mileage, setMileage] = useState('')
+  const [price, setPrice] = useState('')
+  const [description, setDescription] = useState('')
+  const [image, setImage] = useState<File | null>(null)
+  const [selectedBrandId, setSelectedBrandId] = useState<number | null>(null)
+  const [selectedModelId, setSelectedModelId] = useState<number | null>(null)
+
+  const { loadBrands, brands, loadModels, models } = useDb()
+
+  useEffect(() => {
+    loadBrands()
+  }, [loadBrands])
+
+  useEffect(() => {
+    if (selectedBrandId) {
+      loadModels(selectedBrandId)
+    }
+  }, [loadModels, selectedBrandId])
 
   const onDrop = (acceptedFiles: File[]) => {
-    setImage(acceptedFiles[0]);
-  };
+    setImage(acceptedFiles[0])
+  }
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: { 'image/*': [] },
-    maxFiles: 1,
-  });
+    maxFiles: 1
+  })
 
   const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
+    event.preventDefault()
     // Handle form submission logic here
-  };
+  }
 
   return (
     <form onSubmit={handleSubmit} className="w-full p-6 bg-gray-100 rounded-md">
-      <div {...getRootProps()} className="border-2 border-dashed border-gray-500 p-4 mb-4 cursor-pointer text-center">
+      <div
+        {...getRootProps()}
+        className="border-2 border-dashed border-gray-500 p-4 mb-4 cursor-pointer text-center"
+      >
         <input {...getInputProps()} />
         {isDragActive ? (
           <p>Drop the image here ...</p>
@@ -41,16 +56,58 @@ const VehicleForm: React.FC = () => {
       </div>
       {image && (
         <div className="mb-4">
-          <img src={URL.createObjectURL(image)} alt="Vehicle" className="w-full h-auto" />
+          <img
+            src={URL.createObjectURL(image)}
+            alt="Vehicle"
+            className="w-full h-auto"
+          />
         </div>
       )}
-      <Input label="Name" value={name} onChange={(e) => setName(e.target.value)} />
-      <Input label="Model" value={model} onChange={(e) => setModel(e.target.value)} />
-      <Input label="Version" value={version} onChange={(e) => setVersion(e.target.value)} />
-      <Input label="Mileage" value={mileage} onChange={(e) => setMileage(e.target.value)} />
-      <Input label="Price" value={price} onChange={(e) => setPrice(e.target.value)} />
+      <Dropdown
+        label="Fabricante"
+        options={brands.Brands.map((brand) => brand.nome)}
+        selectedValue={
+          selectedBrandId
+            ? brands.Brands.find((brand) => brand.id === selectedBrandId)?.nome ?? "" : ""
+          }
+        onChange={(brandName) => {
+          const selectedBrand = brands.Brands.find(
+            (brand) => brand.nome === brandName
+          )
+          setSelectedBrandId(selectedBrand?.id || null)
+        }}
+      />
+      <Dropdown
+        label="Modelo"
+        options={models.map((model) => model.nome)}
+        selectedValue={
+          selectedModelId
+            ? models.find((model) => model.id === selectedModelId)?.nome?? "" : ""
+        }
+        onChange={(modelName) => {
+          const selectedModel = models.find((model) => model.nome === modelName)
+          setSelectedModelId(selectedModel?.id || null)
+        }}
+      />
+      <Input
+        label="Versão"
+        value={version}
+        onChange={(e) => setVersion(e.target.value)}
+      />
+      <Input
+        label="Quilometragem"
+        value={mileage}
+        onChange={(e) => setMileage(e.target.value)}
+      />
+      <Input
+        label="Preço"
+        value={price}
+        onChange={(e) => setPrice(e.target.value)}
+      />
       <div className="mb-4">
-        <label className="text-xl text-black font-semibold mb-2 block">Description</label>
+        <label className="text-xl text-black font-semibold mb-2 block">
+          Description
+        </label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -73,10 +130,15 @@ const VehicleForm: React.FC = () => {
           "
         />
       </div>
-      <Button label="Submit" onClick={() => {handleSubmit}} disabled={false} />
+      <Button
+        label="Submit"
+        onClick={() => {
+          handleSubmit
+        }}
+        disabled={false}
+      />
     </form>
-  );
-};
+  )
+}
 
-export default VehicleForm;
-
+export default VehicleForm
