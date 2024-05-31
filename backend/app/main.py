@@ -1,5 +1,7 @@
+import io
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from typing import List
 from . import models, schemas, crud, database, auth
@@ -20,8 +22,28 @@ def read_vehicles(skip: int = 0, limit: int = 10, db: Session = Depends(database
     return vehicles
 
 @app.post("/vehicles/", response_model=schemas.Vehicle)
-def create_vehicle(vehicle: schemas.VehicleCreate, db: Session = Depends(database.get_db)):
-    return crud.create_vehicle(db=db, vehicle=vehicle)
+def create_vehicle(
+    vehicle: schemas.VehicleCreate, 
+    db: Session = Depends(database.get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    return crud.create_vehicle(db=db, vehicle=vehicle, current_user=current_user)
 
+@app.get("/vehicles/{id}/photo")
+def get_vehicle_photo(id: int, db: Session = Depends(database.get_db)):
+    db_vehicle = crud.get_vehicle(db, id=id)
+    return FileResponse(
+        io.BytesIO(db_vehicle.photo),
+        media_type="image/jpeg",
+        filename=f"{db_vehicle.model}_{db_vehicle.id}.jpg",
+    )
+
+@app.delete("/vehicles/{id}")
+def delete_vehicle(
+    id: int, 
+    db: Session = Depends(database.get_db), 
+    current_user: models.User = Depends(auth.get_current_user)
+):
+    return crud.delete_vehicle(db, id, current_user)
 
 app.include_router(auth.router, prefix="/auth")

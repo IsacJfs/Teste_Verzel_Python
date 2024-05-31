@@ -1,3 +1,4 @@
+from fastapi import UploadFile
 from pydantic import BaseModel
 
 class UserBase(BaseModel):
@@ -25,10 +26,12 @@ class VehicleBase(BaseModel):
     location: str
 
 class VehicleCreate(VehicleBase):
-    pass
+    photo: UploadFile
 
 class Vehicle(VehicleBase):
     id: int
+    photo: str
+    user_name: str
 
     class Config:
         orm_mode = True

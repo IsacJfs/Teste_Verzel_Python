@@ -1,4 +1,6 @@
-from sqlalchemy import Column, Integer, String, Float, Boolean
+from sqlalchemy import Column, ForeignKey, Integer, String, Float, Boolean
+from sqlalchemy.dialects.postgresql import BYTEA
+from sqlalchemy.orm import relationship
 from .database import Base
 
 class User(Base):
@@ -15,10 +17,14 @@ class Vehicle(Base):
     __tablename__ = "vehicles"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
+    model = Column(String, index=True)
     brand = Column(String)
-    model = Column(String)
-    photo = Column(String)
+    version = Column(String)
+    photo = Column(BYTEA)
     price = Column(Float)
     year = Column(Integer)
     location = Column(String)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    user = relationship("User", back_populates="vehicles")
+
+User.vehicles = relationship("Vehicle", back_populates="user")
