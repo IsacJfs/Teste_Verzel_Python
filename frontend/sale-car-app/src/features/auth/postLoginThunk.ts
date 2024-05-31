@@ -38,6 +38,7 @@ export const loginThunk = createAsyncThunk<
         }
       }
     )
+    toast.success("Login realizado com sucesso!")
     localStorage.setItem('user', username)
     sessionStorage.setItem('access_token', response.data.auth_token)
     if (response.data.auth_token) {
@@ -77,5 +78,3 @@ export const logoutThunk = createAsyncThunk('user/logout', async (_, {rejectWith
     }
   }
 )
-
-//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0ZUNpbmNvIiwic2NvcGVzIjpbXSwiZXhwIjoxNzE3MDc4NzE5fQ.6NbhjTloGGdp49YqLsRS4W7NxvCI5JRIZyevawG8VpQ

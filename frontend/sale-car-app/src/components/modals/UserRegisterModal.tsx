@@ -36,7 +36,8 @@ const RegisterModal = () => {
       email: email,
       password: password,
       username: username,
-      full_name: fullName
+      full_name: fullName,
+      disabled: false
     }
     try {
       if (password !== confirmPassword) {

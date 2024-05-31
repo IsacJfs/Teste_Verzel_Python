@@ -3,6 +3,7 @@ export interface RegisterData {
   full_name: string,
   email: string,
   password: string
+  disabled?: boolean
 }
 
 export interface RegisterResponse {

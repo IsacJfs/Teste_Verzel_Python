@@ -6,7 +6,7 @@ interface UserState {
   userData: { username: string; token: string } | null
   loading: boolean
   error: string | null
-  loginSuccess: boolean
+  isAuthenticated: boolean;
 }
 
 const initialState: UserState = {
@@ -14,7 +14,7 @@ const initialState: UserState = {
   userData: null,
   loading: false,
   error: null,
-  loginSuccess: false
+  isAuthenticated: false,
 }
 
 const loginSlice = createSlice({
@@ -27,23 +27,22 @@ const loginSlice = createSlice({
     onClose: (state) => {
       state.isOpen = false
     },
-    setLoginSuccess: (state, action: PayloadAction<boolean>) => {
-      state.loginSuccess = action.payload
-    }
+    setLoginState(state, action) {
+      state.isAuthenticated = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(loginThunk.pending, (state) => {
         state.loading = true
         state.error = null
-        state.loginSuccess = false
       })
       .addCase(
         loginThunk.fulfilled,
         (state, action: PayloadAction<{ username: string; token: string }>) => {
           state.userData = action.payload
+          state.isAuthenticated = true
           state.loading = false
-          state.loginSuccess = true
         }
       )
       .addCase(
@@ -51,12 +50,11 @@ const loginSlice = createSlice({
         (state, action: PayloadAction<string | undefined>) => {
           state.error = action.payload ?? 'Ocorreu um erro desconhecido'
           state.loading = false
-          state.loginSuccess = false
         }
       )
   }
 })
 
-export const { onOpen, onClose, setLoginSuccess } = loginSlice.actions
+export const { onOpen, onClose, setLoginState } = loginSlice.actions
 
 export default loginSlice.reducer

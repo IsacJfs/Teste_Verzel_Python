@@ -7,7 +7,7 @@ import Input from '../Input'
 
 const LoginModal = () => {
   const registerModal = useUserRegister()
-  const { login, onClose, isOpen, userData, loginSuccess, handleLoginSuccess: handleLoginSuccess } = useLogin()
+  const { login, onClose, isOpen, userData, isAuthenticated} = useLogin()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -15,18 +15,18 @@ const LoginModal = () => {
   const onToggle = useCallback(() => {
     onClose()
     registerModal.onOpen()
+    console.log(registerModal)
   }, [registerModal, onClose])
 
   useEffect(() => {
-    if (loginSuccess) {
+    if (isAuthenticated) {
       console.log("UserData",userData?.token)
       setPassword('')
       sessionStorage.setItem('auth_token', userData?.token || '')
       sessionStorage.setItem('user', username)
       onClose()
-      handleLoginSuccess()
     }
-  }, [handleLoginSuccess, loginSuccess, onClose, userData?.token, username])
+  }, [isAuthenticated, onClose, userData?.token, username])
 
   const onSubmit = useCallback(async () => {
     try {
