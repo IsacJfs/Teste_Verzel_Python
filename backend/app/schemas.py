@@ -20,13 +20,11 @@ class VehicleBase(BaseModel):
     name: str
     brand: str
     model: str
-    photo: str
+    photo: UploadFile
     price: float
     year: int
     location: str
 
-class VehicleCreate(VehicleBase):
-    photo: UploadFile
 
 class Vehicle(VehicleBase):
     id: int

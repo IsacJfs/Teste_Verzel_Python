@@ -9,8 +9,26 @@ from pydantic import BaseModel, EmailStr
 from . import crud, schemas, database, models
 from sqlalchemy.orm import Session
 
-# Para simplificação, estamos usando uma chave secreta estática
-# Em produção, você deve usar uma chave mais segura e armazená-la em variáveis de ambiente
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(database.get_db)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, "YOUR_SECRET_KEY", algorithms=["HS256"])
+        username: str = payload.get("sub")
+        if username is None:
+            raise credentials_exception
+        user = db.query(models.User).filter(models.User.username == username).first()
+        if user is None:
+            raise credentials_exception
+        return user
+    except JWTError:
+        raise credentials_exception
+
 SECRET_KEY = "a7f5a8f4f05f6d8b1d8d7d5f7a5d5d5b1d8d7d5f7a5d5d5b1d8d7d5f7a5d5d5b"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30

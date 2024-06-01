@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { fetchCarsList } from "./getThunk";
-import { CarsState } from "./Types"
+import { CarsState } from "./types"
 
 const initialState: CarsState = {
   cars: [],

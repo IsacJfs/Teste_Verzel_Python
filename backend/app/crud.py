@@ -43,9 +43,9 @@ def delete_vehicle(db: Session, id: int, current_user: models.User):
     db.commit()
     return {"message": "Vehicle deleted successfully"}
 
-def create_vehicle(db: Session, vehicle: schemas.VehicleCreate, current_user: models.User):
+def create_vehicle(db: Session, vehicle: schemas.VehicleBase, current_user: models.User):
 
-    img = Image.open(vehicle.photo.file)
+    img = Image.open(vehicle.photo)
     img = img.resize((800, 600), Image.ANTIALIAS)
     img_bytes = io.BytesIO()
     img.save(img_bytes, format="JPEG")

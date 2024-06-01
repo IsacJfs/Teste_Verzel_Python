@@ -8,7 +8,7 @@ import { fetchBrandsList, fetchModelsList } from './getThunk';
 export const useDb = () => {
   const dispatch = useDispatch<AppDispatch>()
   const brands = useSelector((state: RootState) => state.brands)
-  const models = useSelector((state: RootState) => state.models.Models)
+  const models = useSelector((state: RootState) => state.models)
 
   const loadBrands = useCallback(async () => {
     await dispatch(fetchBrandsList())

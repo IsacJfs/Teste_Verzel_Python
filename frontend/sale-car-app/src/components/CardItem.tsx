@@ -1,5 +1,5 @@
 import React from 'react'
-import { CarsProps } from '../features/cars/Types'
+import { CarsProps } from '../features/cars/types'
 
 interface CardItemProps {
   cars: CarsProps

@@ -12,7 +12,7 @@ interface LoginParams {
 
 // Tipo para a resposta da API de login
 interface LoginResponse {
-  auth_token: string
+  access_token: string
 }
 
 // Thunk para a operação de login
@@ -38,13 +38,14 @@ export const loginThunk = createAsyncThunk<
         }
       }
     )
-    toast.success("Login realizado com sucesso!")
+    console.log(response.data)
     localStorage.setItem('user', username)
-    sessionStorage.setItem('access_token', response.data.auth_token)
-    if (response.data.auth_token) {
+    sessionStorage.setItem('access_token', response.data.access_token)
+    toast.success("Login realizado com sucesso!")
+    if (response.data.access_token) {
       toast.success('Login realizado com sucesso!')
     }
-    return { username, token: response.data.auth_token }
+    return { username, token: response.data.access_token }
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       toast.error('Usuário ou senha inválidos!')

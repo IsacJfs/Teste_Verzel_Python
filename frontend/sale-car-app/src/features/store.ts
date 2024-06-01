@@ -3,6 +3,7 @@ import carsReducer from "./cars/carsSlice";
 import loginReducer from "./auth/loginSlice";
 import brandsReducer from "./dbModels/brandSlice";
 import modelReducer from "./dbModels/modelSlice";
+import createCarReducer from "./cars/createCarSlice";
 import userRegisterReducer from "./register/userRegisterSlice";
 
 export const store = configureStore({
@@ -11,7 +12,8 @@ export const store = configureStore({
     login: loginReducer,
     userRegister: userRegisterReducer,
     brands: brandsReducer,
-    models: modelReducer
+    models: modelReducer,
+    createCar: createCarReducer
   }
 })
 
