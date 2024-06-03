@@ -1,16 +1,11 @@
-import io
 from fastapi import FastAPI, Depends, File, Form, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from typing import List
 from . import models, schemas, crud, database, auth
 
 app = FastAPI()
-
-origins = [
-    "http://localhost:5137",
-]
 
 app.add_middleware(
     CORSMiddleware,
@@ -22,10 +17,19 @@ app.add_middleware(
 )
 models.Base.metadata.create_all(bind=database.engine)
 
+app.include_router(auth.router, prefix="/auth")
+
 @app.get("/vehicles/", response_model=List[schemas.Vehicle])
 def read_vehicles(skip: int = 0, limit: int = 10, db: Session = Depends(database.get_db)):
     vehicles = crud.get_vehicles(db, skip=skip, limit=limit)
     return vehicles
+
+@app.get("/vehicles/{vehicle_id}", response_model=schemas.Vehicle)
+def read_vehicle(vehicle_id: int, db: Session = Depends(database.get_db)):
+    db_vehicle = crud.get_vehicle(db, id_vehicle=vehicle_id)
+    if db_vehicle is None:
+        raise HTTPException(status_code=404, detail="Vehicle not found")
+    return db_vehicle
 
 @app.post("/vehicles/", response_model=schemas.Vehicle)
 def create_vehicle(
@@ -35,43 +39,36 @@ def create_vehicle(
 ):
     return crud.create_vehicle(db=db, vehicle=vehicle, current_user=current_user)
 
-@app.post("/upload/")
-async def upload_image(file: UploadFile = File(...)):
-    if not file.content_type.startswith('image/'):
-        return JSONResponse(status_code=400, content={"message": "Invalid file type"})
-    try:
-        contents = await file.read()
-        
-        return {"filename": file.filename, "length": len(contents)}
-    except Exception as e:
-        return JSONResponse(status_code=500, content={"message": str(e)})
-    finally:
-        await file.close()
-        
-@app.get("/vehicles/{id}/photo")
-def get_vehicle_photo(id: int, db: Session = Depends(database.get_db)):
-    db_vehicle = crud.get_vehicle(db, id=id)
-    return FileResponse(
-        io.BytesIO(db_vehicle.photo),
-        media_type="image/jpeg",
-        filename=f"{db_vehicle.model}_{db_vehicle.id}.jpg",
-    )
 
-@app.delete("/vehicles/{id}")
-def delete_vehicle(
-    id: int, 
-    db: Session = Depends(database.get_db), 
-    current_user: models.User = Depends(auth.get_current_user)
-):
-    return crud.delete_vehicle(db, id, current_user)
+@app.delete("/vehicles/{vehicle_id}", response_model=schemas.Vehicle)
+def delete_vehicle(vehicle_id: int, db: Session = Depends(database.get_db), current_user: models.User = Depends(auth.get_current_user)):
+    return crud.delete_vehicle(db=db, id_vehicle=vehicle_id, current_user=current_user)
 
-app.include_router(auth.router, prefix="/auth")
+@app.post("/vehicle_images/", response_model=schemas.VehicleImage)
+async def create_vehicle_image(vehicle_id: int, image: UploadFile = File(...), db: Session = Depends(database.get_db)):
+    vehicle_image = schemas.VehicleImageCreate(vehicle_id=vehicle_id, image=image)
+    return await crud.create_vehicle_image(db=db, vehicle_image=vehicle_image)
 
-@app.get("/brands/", response_model=List[schemas.Brand])
+@app.get("/vehicle_images/{image_id}", response_model=schemas.VehicleImage)
+def read_vehicle_image(image_id: int, db: Session = Depends(database.get_db)):
+    db_image = crud.get_vehicle_image(db, image_id=image_id)
+    if db_image is None:
+        raise HTTPException(status_code=404, detail="Vehicle image not found")
+    return db_image
+
+@app.delete("/vehicle_images/{image_id}", response_model=schemas.VehicleImage)
+def delete_vehicle_image(image_id: int, db: Session = Depends(database.get_db)):
+    db_image = crud.get_vehicle_image(db, image_id=image_id)
+    if db_image is None:
+        raise HTTPException(status_code=404, detail="Vehicle image not found")
+    return crud.delete_vehicle_image(db=db, image_id=image_id)
+
+
+@app.get("/brands/", response_model=List[schemas.BrandCar])
 def read_brands(db: Session = Depends(database.get_db)):
     return crud.get_brands(db)
 
-@app.get("/brands/{marca_id}/models/", response_model=List[schemas.Model])
+@app.get("/brands/{marca_id}/models/", response_model=List[schemas.ModelCar])
 def read_models_by_brands(marca_id: int, db: Session = Depends(database.get_db)):
     return crud.get_models_by_brands(db, marca_id)
 
@@ -86,42 +83,3 @@ async def unicorn_exception_handler(request: Request, exc: CustomException):
         status_code=exc.status_code,
         content={"message": exc.message},
     )
-
-@app.post("/create-vehicle/")
-async def create_vehicle(
-        name: str = Form(...), 
-        model: str = Form(...), 
-        brand: str = Form(...), 
-        year: int = Form(...), 
-        price: float = Form(...), 
-        location: str = Form(...),
-        photo: UploadFile = File(...),
-        current_user: models.User = Depends(auth.get_current_user),
-        db: Session = Depends(database.get_db)):
-    
-    if not photo.content_type.startswith('image/'):
-        return JSONResponse(status_code=400, content={"message": "Invalid photo type"})
-    try:
-        photo_contents = await photo.read()
-
-        vehicle_data = schemas.VehicleBase(
-            name=name,
-            model=model,
-            brand=brand,
-            year=year,
-            price=price,
-            location=location,
-            photo=photo_contents  
-        )
-
-        vehicle = crud.create_vehicle(db=db, vehicle=vehicle_data, current_user=current_user)
-        return {
-            "name": vehicle.name,
-            "model": vehicle.model,
-            "photo_length": len(photo_contents),
-            "photo_filename": photo.filename
-        }
-    except Exception as e:
-        return JSONResponse(status_code=500, content={"message": str(e)})
-    finally:
-        await photo.close()
