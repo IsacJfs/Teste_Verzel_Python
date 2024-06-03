@@ -1,6 +1,9 @@
 from fastapi import UploadFile
 from pydantic import BaseModel
-from typing import List
+from typing import List, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .models import Vehicle, VehicleImage, BrandCar, ModelCar
 
 class UserBase(BaseModel):
     username: str
@@ -49,8 +52,6 @@ class BrandCreate(BrandBase):
 
 class BrandCar(BrandBase):
     id: int
-    models: List["ModelCar"] = []
-    vehicle: List["Vehicle"] = []
 
     class Config:
         orm_mode = True
@@ -64,8 +65,7 @@ class ModelCreate(ModelBase):
 
 class ModelCar(ModelBase):
     id: int
-    marca: BrandCar
-    Vehicle: List["Vehicle"] = []
+    # brand_id: int
 
     class Config:
         orm_mode = True

@@ -54,11 +54,15 @@ def create_vehicle(db: Session, vehicle: schemas.VehicleBase, current_user: mode
     db.refresh(db_vehicle)
     return db_vehicle
 
+# Brands and Models
+
 def get_brands(db: Session):
     return db.query(models.BrandCar).all()
 
 def get_models_by_brands(db: Session, marca_id: int):
-    return db.query(models.ModelCar).filter(models.ModelCar.brand_id == marca_id).all()
+    return db.query(models.ModelCar).filter(models.ModelCar.idmarca == marca_id).all()
+
+# Image
 
 def get_vehicle_image(db: Session, image_id: int):
     return db.query(models.VehicleImage).filter(models.VehicleImage.id == image_id).first()

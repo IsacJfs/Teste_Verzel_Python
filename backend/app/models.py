@@ -27,25 +27,24 @@ class Vehicle(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
     user = relationship("User", back_populates="vehicles")
     images = relationship("VehicleImage", back_populates="vehicle")
-    model_car = relationship("ModelCar", back_populates="vehicles")
-    brand_car = relationship("BrandCar", back_populates="vehicles")
+    # model_car = relationship("ModelCar", back_populates="vehicles")
+    # brand_car = relationship("BrandCar", back_populates="vehicles")
 
 class BrandCar(Base):
     __tablename__ = "marcas_carros"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, unique=True, index=True)
-    car_model = relationship("ModelCar", back_populates="marca")
-    car_brand = relationship("Vehicle", back_populates="brand")
+    nome = Column(String, unique=True, index=True)
 
 class ModelCar(Base):
     __tablename__ = "modelos_carro"
 
     id = Column(Integer, primary_key=True, index=True)
-    brand_id = Column(Integer, ForeignKey("marcas_carros.id"))
-    name = Column(String, index=True)
-    car_model = relationship("BrandCar", back_populates="models")
-    car_brand = relationship("Vehicle", back_populates="model")
+    idmarca = Column(Integer, ForeignKey("marcas_carros.id"))
+    nome = Column(String, index=True)
+    marca = relationship("BrandCar", back_populates="models")
+
+BrandCar.models = relationship("ModelCar", back_populates="marca")
 
 class VehicleImage(Base):
     __tablename__ = "vehicle_images"
