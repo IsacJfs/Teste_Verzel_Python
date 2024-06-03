@@ -19,7 +19,7 @@ class User(UserBase):
         orm_mode = True
 
 class VehicleBase(BaseModel):
-    model_id: int
+    car_model_id: int
     brand_id: int
     price: float
     year: int
@@ -35,7 +35,7 @@ class Vehicle(VehicleBase):
         orm_mode = True
 
 class VehicleCreate(VehicleBase):
-    model_id: int
+    car_model_id: int
     brand_id: int
     price: float
     year: int
