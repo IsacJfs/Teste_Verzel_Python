@@ -1,20 +1,18 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useDropzone } from 'react-dropzone';
+import React, { useState, useEffect} from 'react';
+// import { useDropzone } from 'react-dropzone';
 import Input from './Input';
 import Button from './Button';
 import Dropdown from './Dropdown';
 import { useDb } from '@/features/dbModels/useDb';
 import { useCars } from '@/features/cars/useCars';
 import toast from 'react-hot-toast';
-import { VehicleCreate } from '@/features/cars/types';
+import { Vehicle } from '@/features/cars/types';
 
 const VehicleForm: React.FC = () => {
   const [year, setYear] = useState('');
   const [location, setLocation] = useState('');
-  const [version, setVersion] = useState('');
-  const [mileage, setMileage] = useState('');
   const [price, setPrice] = useState('');
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  // const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
   const { brands, loadBrands, models, loadModels } = useDb();
   const { handleCreateVehicle } = useCars();
@@ -26,15 +24,15 @@ const VehicleForm: React.FC = () => {
     loadBrands();
   }, [loadBrands]);
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    setSelectedImage(acceptedFiles[0]);
-  }, []);
+  // const onDrop = useCallback((acceptedFiles: File[]) => {
+  //   setSelectedImage(acceptedFiles[0]);
+  // }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: { 'image/*': [] },
-    maxFiles: 1,
-  });
+  // const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  //   onDrop,
+  //   accept: { 'image/*': [] },
+  //   maxFiles: 1,
+  // });
 
   useEffect(() => {
     if (selectedBrandId) {
@@ -46,10 +44,10 @@ const VehicleForm: React.FC = () => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (!selectedImage) {
-      toast.error('Por favor, selecione uma imagem.');
-      return;
-    }
+    // if (!selectedImage) {
+    //   toast.error('Por favor, selecione uma imagem.');
+    //   return;
+    // }
 
     const selectedBrand = brands.Brands.find((brand) => brand.id === selectedBrandId);
     const selectedModel = models.Models.find((model) => model.id === selectedModelId);
@@ -59,23 +57,20 @@ const VehicleForm: React.FC = () => {
       return;
     }
 
-    const vehicleData : VehicleCreate = {
-      brand: selectedBrand.nome,
-      model: selectedModel.nome,
-      photo: selectedImage,
+    const vehicleData : Vehicle = {
+      brand_id: selectedBrand.id,
+      car_model_id: selectedModel.id,
       price: parseFloat(price),
       year: parseInt(year, 10),
       location: location,
-      name: version,
-      description: '',
     };
 
     try {
-      await handleCreateVehicle(vehicleData, token);
+      await handleCreateVehicle({
+        vehicleData, authentication: { access_token: token }});
       setYear('');
       setLocation('');
       setPrice('');
-      setSelectedImage(null);
       setSelectedBrandId(null);
       setSelectedModelId(null);
     } catch (error) {
@@ -86,7 +81,7 @@ const VehicleForm: React.FC = () => {
 
   return (
     <form onSubmit={handleSubmit} className="w-full p-6 bg-gray-100 rounded-md">
-      <div
+      {/* <div
         {...getRootProps()}
         className="border-2 border-dashed border-gray-500 p-4 mb-4 cursor-pointer text-center"
       >
@@ -105,7 +100,7 @@ const VehicleForm: React.FC = () => {
             className="w-full h-auto"
           />
         </div>
-      )}
+      )} */}
       <Dropdown
         label="Fabricante"
         options={brands.Brands.map((brand) => brand.nome)}
@@ -133,35 +128,20 @@ const VehicleForm: React.FC = () => {
         }}
       />
       <Input
-        label="Versão"
-        value={version}
-        onChange={(e) => setVersion(e.target.value)}
-      />
-      <Input
-        label="Quilometragem"
-        value={mileage}
-        onChange={(e) => setMileage(e.target.value)}
-      />
-      <Input
-        label="Ano de Fabricação"
-        value={year}
-        onChange={(e) => setYear(e.target.value)}
-      />
-      <Input
         label="Preço"
         value={price}
         onChange={(e) => setPrice(e.target.value)}
+      />
+      <Input
+        label="Ano"
+        value={year}
+        onChange={(e) => setYear(e.target.value)}
       />
       <Input
         label="Localização"
         value={location}
         onChange={(e) => setLocation(e.target.value)}
       />
-      <div className="mb-4">
-        <label className="text-xl text-black font-semibold mb-2 block">
-          Description
-        </label>
-      </div>
       <Button
         label="Submit"
         onClick={() => {

@@ -3,25 +3,24 @@ import { AppDispatch, RootState } from "../store";
 import { useCallback, useEffect, useState } from "react";
 import { fetchCarsList } from "./getThunk";
 import { VehicleCreate } from "./types";
-import { createVehicle } from "./postThunk";
+import { postVehicle } from "./postThunk";
 
 
 export const useCars = () => {
   const dispatch = useDispatch<AppDispatch>()
   const cars = useSelector((state: RootState) => state.cars.cars)
-  const {vehicles, loading, error} = useSelector((state: RootState) => state.createCar)
+  const {vehicles, isLoading, error} = useSelector((state: RootState) => state.createCar)
   const [success, setSuccess] = useState(false);
 
   const loadCars = useCallback(async () => {
     await dispatch(fetchCarsList())
   }, [dispatch])
 
-  const handleCreateVehicle = async (vehicleData: VehicleCreate, token: string) => {
+  const handleCreateVehicle = async (createVehicle: VehicleCreate) => {
     try {
-      await dispatch(createVehicle({vehicleData, token})).unwrap(); // Wait for the thunk to complete
+      await dispatch(postVehicle(createVehicle)); // Wait for the thunk to complete
       setSuccess(true);
     } catch (err) {
-      // Handle error (display error message, etc.)
       console.error("Error creating vehicle:", err);
     }
   };
@@ -39,7 +38,7 @@ export const useCars = () => {
     cars,
     loadCars,
     vehicles,
-    loading,
+    isLoading,
     error,
     handleCreateVehicle,
     success
