@@ -12,7 +12,7 @@ export const postVehicle = createAsyncThunk(
     try {
       const response = await axios.post(`${API_URL}/vehicles/`, vehicleData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${authentication}`,
         },
       });

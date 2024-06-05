@@ -17,7 +17,7 @@ app.add_middleware(
 )
 models.Base.metadata.create_all(bind=database.engine)
 
-app.include_router(auth.router, prefix="/auth")
+app.include_router(auth.router)
 
 @app.get("/vehicles/", response_model=List[schemas.Vehicle])
 def read_vehicles(skip: int = 0, limit: int = 10, db: Session = Depends(database.get_db)):
@@ -33,7 +33,7 @@ def read_vehicle(vehicle_id: int, db: Session = Depends(database.get_db)):
 
 @app.post("/vehicles/", response_model=schemas.Vehicle)
 def create_vehicle(
-    vehicle: schemas.VehicleBase, 
+    vehicle: schemas.VehicleCreate, 
     db: Session = Depends(database.get_db),
     current_user: models.User = Depends(auth.get_current_user),
 ):

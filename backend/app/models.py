@@ -19,8 +19,8 @@ class Vehicle(Base):
     __tablename__ = "vehicles"
 
     id = Column(Integer, primary_key=True, index=True)
-    model_id = Column(Integer, ForeignKey("modelos_carro.id"), index=True)
-    brand_id = Column(Integer, ForeignKey("marcas_carros.id"), index=True)
+    car_model_id = Column(Integer, index=True)
+    brand_id = Column(Integer, index=True)
     price = Column(Float)
     year = Column(Integer)
     location = Column(String)

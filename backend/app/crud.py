@@ -40,9 +40,9 @@ def delete_vehicle(db: Session, id_vehicle: int, current_user: models.User):
     db.commit()
     return {"message": "Vehicle deleted successfully"}
 
-def create_vehicle(db: Session, vehicle: schemas.VehicleBase, current_user: models.User):
+def create_vehicle(db: Session, vehicle: schemas.VehicleCreate, current_user: models.User):
     db_vehicle = models.Vehicle(
-        model_id=vehicle.car_model_id,
+        car_model_id=vehicle.car_model_id,
         brand_id=vehicle.brand_id,
         price=vehicle.price,
         year=vehicle.year,
