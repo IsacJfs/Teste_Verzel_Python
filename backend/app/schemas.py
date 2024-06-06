@@ -1,4 +1,3 @@
-from fastapi import UploadFile
 from pydantic import BaseModel
 from typing import List, TYPE_CHECKING
 
@@ -72,11 +71,12 @@ class ModelCar(ModelBase):
 
 class VehicleImageBase(BaseModel):
     vehicle_id: int
-    image:UploadFile
+    image_name: str
+    image_ext: str
+    image_content: str
 
-class VehicleImageCreate(BaseModel):
-    vehicle_id: int
-    image: UploadFile
+class VehicleImageCreate(VehicleImageBase):
+    pass
 
 class VehicleImage(VehicleImageBase):
     id: int

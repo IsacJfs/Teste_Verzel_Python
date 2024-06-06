@@ -1,5 +1,4 @@
 from sqlalchemy import Column, ForeignKey, Integer, String, Float, Boolean
-from sqlalchemy.dialects.postgresql import BYTEA
 from sqlalchemy.orm import relationship
 from .database import Base
 
@@ -51,5 +50,7 @@ class VehicleImage(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     vehicle_id = Column(Integer, ForeignKey("vehicles.id"))
-    image = Column(BYTEA)
+    image_name = Column(String, nullable=False)
+    image_ext = Column(String, nullable=False)
+    image_content = Column(String, nullable=False)
     vehicle = relationship("Vehicle", back_populates="images")

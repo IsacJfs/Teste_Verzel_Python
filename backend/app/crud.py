@@ -1,4 +1,6 @@
-from fastapi import HTTPException, status
+import hashlib
+import os
+from fastapi import File, HTTPException, UploadFile, status
 from sqlalchemy.orm import Session
 from . import models, schemas, auth
 
@@ -64,16 +66,24 @@ def get_models_by_brands(db: Session, marca_id: int):
 
 # Image
 
-def get_vehicle_image(db: Session, image_id: int):
-    return db.query(models.VehicleImage).filter(models.VehicleImage.id == image_id).first()
+def save_image_file(image: UploadFile):
+    file_path = os.path.join("images", image.filename)
+    with open(file_path, "wb") as buffer:
+        buffer.write(image.file.read())
+    return file_path
 
-async def create_vehicle_image(db: Session, vehicle_image: schemas.VehicleImageCreate):
-    content = await vehicle_image.image.read()
-    db_image = models.VehicleImage(
-        vehicle_id=vehicle_image.vehicle_id,
-        image=content
+def create_vehicle_image(db: Session, image: UploadFile, vehicle_id: int):
+    file_path = save_image_file(image)
+    db_vehicle_image = models.VehicleImage(
+        vehicle_id=vehicle_id,
+        image_name=image.filename,
+        image_ext=image.content_type,
+        image_content=file_path
     )
-    db.add(db_image)
+    db.add(db_vehicle_image)
     db.commit()
-    db.refresh(db_image)
-    return db_image
+    db.refresh(db_vehicle_image)
+    return db_vehicle_image
+
+def get_vehicle_images(db: Session, vehicle_id: int):
+    return db.query(models.VehicleImage).filter(models.VehicleImage.vehicle_id == vehicle_id).all()

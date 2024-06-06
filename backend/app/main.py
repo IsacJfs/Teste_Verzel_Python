@@ -1,11 +1,14 @@
-from fastapi import FastAPI, Depends, File, Form, HTTPException, Request, UploadFile
+from fastapi import FastAPI, Depends, File, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from typing import List
 from . import models, schemas, crud, database, auth
 
 app = FastAPI()
+
+app.mount("/images", StaticFiles(directory="images"), name="images")
 
 app.add_middleware(
     CORSMiddleware,
@@ -44,24 +47,32 @@ def create_vehicle(
 def delete_vehicle(vehicle_id: int, db: Session = Depends(database.get_db), current_user: models.User = Depends(auth.get_current_user)):
     return crud.delete_vehicle(db=db, id_vehicle=vehicle_id, current_user=current_user)
 
-@app.post("/vehicle_images/", response_model=schemas.VehicleImage)
-async def create_vehicle_image(vehicle_id: int, image: UploadFile = File(...), db: Session = Depends(database.get_db)):
-    vehicle_image = schemas.VehicleImageCreate(vehicle_id=vehicle_id, image=image)
-    return await crud.create_vehicle_image(db=db, vehicle_image=vehicle_image)
+@app.post("/vehicles/{vehicle_id}/images/", response_model=schemas.VehicleImage)
+def create_vehicle_image(
+    vehicle_id: int,
+    image: UploadFile = File(...),
+    db: Session = Depends(database.get_db),
+    current_user: models.User = Depends(auth.get_current_user)
+):
+    # Verifica se o veículo existe e pertence ao usuário atual
+    db_vehicle = db.query(models.Vehicle).filter(models.Vehicle.id == vehicle_id, models.Vehicle.user_id == current_user.id).first()
+    if not db_vehicle:
+        raise HTTPException(status_code=404, detail="Vehicle not found or not authorized")
+    
+    return crud.create_vehicle_image(db=db, image=image, vehicle_id=vehicle_id)
 
-@app.get("/vehicle_images/{image_id}", response_model=schemas.VehicleImage)
-def read_vehicle_image(image_id: int, db: Session = Depends(database.get_db)):
-    db_image = crud.get_vehicle_image(db, image_id=image_id)
-    if db_image is None:
-        raise HTTPException(status_code=404, detail="Vehicle image not found")
-    return db_image
-
-@app.delete("/vehicle_images/{image_id}", response_model=schemas.VehicleImage)
-def delete_vehicle_image(image_id: int, db: Session = Depends(database.get_db)):
-    db_image = crud.get_vehicle_image(db, image_id=image_id)
-    if db_image is None:
-        raise HTTPException(status_code=404, detail="Vehicle image not found")
-    return crud.delete_vehicle_image(db=db, image_id=image_id)
+@app.get("/vehicles/{vehicle_id}/images/", response_model=List[schemas.VehicleImage])
+def get_vehicle_images(
+    vehicle_id: int,
+    db: Session = Depends(database.get_db),
+    current_user: models.User = Depends(auth.get_current_user)
+):
+    # Verifica se o veículo existe e pertence ao usuário atual
+    db_vehicle = db.query(models.Vehicle).filter(models.Vehicle.id == vehicle_id, models.Vehicle.user_id == current_user.id).first()
+    if not db_vehicle:
+        raise HTTPException(status_code=404, detail="Vehicle not found or not authorized")
+    
+    return crud.get_vehicle_images(db=db, vehicle_id=vehicle_id)
 
 
 @app.get("/brands/", response_model=List[schemas.BrandCar])
