@@ -1,20 +1,20 @@
 import React from 'react'
-import { CarsProps } from '../features/cars/types'
+import { VehicleResponse } from '../features/cars/types'
 
 interface CardItemProps {
-  cars: CarsProps
+  cars: VehicleResponse
 }
 
 const CardItem: React.FC<CardItemProps> = ({ cars }) => {
   return (
     <div className="max-w-72 rounded-md overflow-hidden shadow-lg border">
-      <img className="w-full h-[48%] sm:h-[40%] object-contain overflow-hidden" src={cars.photo} alt={`${cars.name}`} />
+      <img className="w-full h-[48%] sm:h-[40%] object-contain overflow-hidden" src={`http://localhost:8000/images/${cars.images[0].image_name}`} alt={"asdf"} />
       <div className="px-6 py-4 border-b">
         <div className="text-start font-bold text-xl mb-2">
-          {cars.name} - {cars.brand}
+          {cars.car_model_id} - {cars.brand_id}
         </div>
         <p className="text-gray-700 text-base text-start">
-          {cars.year} - {cars.model}
+          {cars.year} - {cars.car_model_id}
         </p>
       </div>
       <div className="px-6 pt-4 pb-2 border-b">

@@ -14,7 +14,13 @@ export interface VehicleResponse {
   location: string
   id: number
   user_id: number
-  images: []
+  images: [{
+    vehicle_id: number
+    image_name: string
+    image_ext: string
+    image_content: string
+    id: number
+  }]
 }
 export interface VehicleImage {
   image: File

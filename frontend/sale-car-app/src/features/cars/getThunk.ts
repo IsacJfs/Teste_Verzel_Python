@@ -8,6 +8,7 @@ export const fetchCarsList = createAsyncThunk(
   async () => {
     try {
       const response = await axios.get(postUrl);
+      console.log(response.data)
       return response.data;
     } catch (error) {
       return Promise.reject(error);
