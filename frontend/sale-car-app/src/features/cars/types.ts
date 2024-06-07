@@ -22,6 +22,13 @@ export interface VehicleResponse {
     id: number
   }]
 }
+
+export interface VehicleState {
+  vehicles: VehicleResponse[]
+  isLoading: boolean
+  error: string | null
+}
+
 export interface VehicleImage {
   image: File
 }

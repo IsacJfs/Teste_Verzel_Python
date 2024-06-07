@@ -8,7 +8,7 @@ import { postVehicle } from "./postThunk";
 
 export const useCars = () => {
   const dispatch = useDispatch<AppDispatch>()
-  const cars = useSelector((state: RootState) => state.cars.cars)
+  const cars = useSelector((state: RootState) => state.cars.vehicles)
   const {vehicles, isLoading, error} = useSelector((state: RootState) => state.createCar)
   const [success, setSuccess] = useState(false);
 

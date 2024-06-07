@@ -34,5 +34,14 @@ services:
     environment:
       -  DATABASE_URL=postgresql://user:password@db:5432/vehicles
 
+  frontend:
+    build:
+      context: ./frontend
+    # volumes:
+    #   - ./frontend:/app
+    ports:
+      - "5000:5000"
+    command: npx vite preview --port 5000 --host
+
 volumes:
   postgres_data:

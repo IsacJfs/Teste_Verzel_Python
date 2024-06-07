@@ -1,9 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { fetchCarsList } from "./getThunk";
-import { CarsState } from "./types"
+import { VehicleState } from "./types"
 
-const initialState: CarsState = {
-  cars: [],
+const initialState: VehicleState = {
+  vehicles: [],
   isLoading: false,
   error: null
 }
@@ -19,7 +19,7 @@ const carsSlice = createSlice({
       })
       .addCase(fetchCarsList.fulfilled, (state, action) => {
         state.isLoading = false
-        state.cars = action.payload
+        state.vehicles = action.payload
       })
       .addCase(fetchCarsList.rejected, (state, action) => {
         state.isLoading = false
